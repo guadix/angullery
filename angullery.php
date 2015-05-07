@@ -11,36 +11,8 @@
 
 namespace Angullery;
 
-/**
-* 
-*/
-class Angullery
-{
-	
-	public $instance;
+include_once __DIR__.'/vendor/autoload.php';
 
-
-	function __construct()
-	{
-		
-		add_shortcode('angullery', array($this, 'shortcodeHandler'));
-
-		if (is_admin())
-		{
-			//aca Guada
-		}
-		else
-		{
-			//aca Adrian
-		}
-
-
-
-	}
-
-	function shortcodeHandler()
-	{
-
-	}
-
-}
+add_action('init', function(){
+	$go = new AngulleryPlugin();
+});
