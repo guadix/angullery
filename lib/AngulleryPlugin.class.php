@@ -67,6 +67,34 @@ class AngulleryPlugin
 		echo $this->getTemplateOutput($path);
 	}
 
+    public function saveMetabox($post_id)
+    {
+        global $meta_box;
+
+        // check autosave
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return $post_id;
+        }
+
+        // check permissions
+        if ('page' == $_POST['post_type']) {
+            if (!current_user_can('edit_page', $post_id)) {
+                return $post_id;
+            }
+        } elseif (!current_user_can('edit_post', $post_id)) {
+            return $post_id;
+        }
+
+        $old   = get_post_meta($post_id, 'angullery-metabox', true);
+        $new   = $_POST['angullery--gallery'];
+
+        if ($new && $new != $old) {
+            update_post_meta($post_id, 'angullery-metabox', $new);
+        } elseif ('' == $new && $old) {
+            delete_post_meta($post_id, 'angullery-metabox', $old);
+        }
+    }
+
 	/**
 	 * Handles angullery shortcode
 	 *
@@ -118,6 +146,14 @@ class AngulleryPlugin
 
 		if (is_admin())
 		{
+			wp_localize_script(
+				'angullery-admin-app',
+				'angullery-data',
+				array(
+					'pluginPath' => __DIR__
+				)
+			);
+
 			wp_enqueue_script(
 				'angullery-admin-app',
 				plugin_dir_url(__FILE__) . '../admin/webcomponent/js/angullery-admin.js',
@@ -125,6 +161,20 @@ class AngulleryPlugin
 				'1.0.0',
 				true
 			);
+            wp_enqueue_script(
+                'angullery-admin-controller',
+                plugin_dir_url(__FILE__) . '../admin/webcomponent/js/controllers/angulleryAdminController.js',
+                array('angularjs'),
+                '1.0.0',
+                true
+            );
+            wp_enqueue_script(
+                'angullery-admin-metabox',
+                plugin_dir_url(__FILE__) . '../admin/webcomponent/js/directives/angulleryMetabox.js',
+                array('angularjs'),
+                '1.0.0',
+                true
+            );
 		}
 		else
 		{
