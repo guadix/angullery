@@ -7,7 +7,7 @@
 
             return {
                 restrict: 'E',
-                templateUrl: PLUGINPATH + 'admin/templates/metabox_directive.html',
+                templateUrl: PLUGINPATH + 'admin/webcomponent/js/templates/metabox_directive.html',
             };
         });
 })();

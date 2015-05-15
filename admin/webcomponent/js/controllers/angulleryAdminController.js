@@ -3,22 +3,25 @@
 
     angular
         .module('angullery-admin')
-        .controller('angulleryAdminController', adminController);
+        .controller('AngulleryAdminController', adminController);
 
     function adminController($scope, $rootScope) {
         var vm        = this;
-        vm.newGallery = newGallery;
-        vm.addImage   = addImage;
-        vm.hasImage   = hasImage;
-        vm.getGallery = getGallery;
-        vm.mainImage  = 'https://farm4.staticflickr.com/3261/2801924702_ffbdeda927_d.jpg';
-        vm.gallery = [];
+        $scope.newGallery = newGallery;
+        $scope.addImage   = addImage;
+        $scope.hasImage   = hasImage;
+        $scope.getGallery = getGallery;
+        $scope.mainImage  = 'https://farm4.staticflickr.com/3261/2801924702_ffbdeda927_d.jpg';
+        $scope.gallery    = [];
+        $scope.galleryJson = '';
+
         var frame;
 
-        $scope.$on('angullery:image:added', function() {
-            debugger;
-            vm.mainImage = vm.gallery[vm.gallery.length - 1];
-            $scope.mainImage = vm.gallery[vm.gallery.length - 1];
+        $scope.$on('angullery:image:added', function(event, message) {
+            $scope.addImage(message.attachment);
+            $scope.mainImage = $scope.gallery[$scope.gallery.length - 1].url;
+            $scope.galleryJson = JSON.stringify($scope.gallery);
+            //$scope.mainImage = vm.gallery[vm.gallery.length - 1].url;
         });
 
         function newGallery() {
@@ -47,42 +50,26 @@
 
                 // Send the attachment URL to our custom image input field.
 
-                vm.addImage(attachment);
-
+                $rootScope.$broadcast('angullery:image:added', {'attachment': attachment});
                 // Send the attachment id to our hidden input
                 //imgIdInput.val( attachment.id );
 
             });
 
-            frame.on('close', function() {
-                //var selection = frame.state().get('selection');
-                $rootScope.$broadcast('angullery:image:added');
-            })
-
             // Finally, open the modal on click
             frame.open();
         }
 
-
         function addImage(image) {
-            vm.mainImage = image.url;
-            vm.gallery.push(image);
-            debugger;
+           $scope.gallery.push(image);
         }
 
         function hasImage() {
-            return vm.gallery.length > 0;
+            return $scope.gallery.length > 0;
         }
 
         function getGallery() {
-            debugger;
-            return vm.gallery;
-            //return vm.gallery.toJSON();
+            return $scope.gallery;
         }
-
-//            function mainImage() {
-//               return vm.gallery[0];
-//            }
-
     }
 })();

@@ -1,3 +1,3 @@
-<div ng-app="angullery-admin" ng-controller="angulleryAdminController as Generator">
+<div data-ng-app="angullery-admin" data-ng-controller="AngulleryAdminController">
 	<angullery-metabox></angullery-metabox>
 </div>
